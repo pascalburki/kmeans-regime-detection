@@ -13,3 +13,11 @@ Computed log returns and 20-day rolling volatility
 Key finding: my input features are daily returns and rolling 20 day volatility. returns show the direction and size of price moves, and volatility shows how calm or chaotic
 the period was, together they can help us see regimes 
 Script: foundations/july5_data_setup.py
+
+## July 11 2026
+Ran first K-means clustering (K=3) on SPY returns + 20-day volatility, 2018-2023
+Cluster sizes: 0 = 1005 days, 1 = 306 days, 2 = 178 days
+Cluster 0: near-zero return, lowest vol
+Cluster 1: strong positive return, moderate-high vol
+Cluster 2: strong negative return, highest vol
+Script: first_implementation/july11_first_kmeans_run.py

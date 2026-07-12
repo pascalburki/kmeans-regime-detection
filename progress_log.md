@@ -21,3 +21,11 @@ Cluster 0: near-zero return, lowest vol
 Cluster 1: strong positive return, moderate-high vol
 Cluster 2: strong negative return, highest vol
 Script: first_implementation/july11_first_kmeans_run.py
+
+## July 12 2026
+Learned elbow method conceptually
+Tested K=2 through K=5, plotted inertia curve
+Inertia: K=2: 0.2135, K=3: 0.1508, K=4: 0.1181, K=5: 0.0934
+Best K appears to be 3 because it has the biggest improvement, and after that 
+diminishing returns start, 0.06 improvement from 2 to 3, then 0.04, then 0.03
+Script: first_implementation/july12_elbow_method.py

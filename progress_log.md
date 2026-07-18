@@ -29,3 +29,11 @@ Inertia: K=2: 0.2135, K=3: 0.1508, K=4: 0.1181, K=5: 0.0934
 Best K appears to be 3 because it has the biggest improvement, and after that 
 diminishing returns start, 0.06 improvement from 2 to 3, then 0.04, then 0.03
 Script: first_implementation/july12_elbow_method.py
+
+## July 18 2026
+Re-ran K-means with K=3 on SPY returns + 20-day volatility
+Plotted returns vs volatility scatter, color-coded by cluster
+Cluster 0 represents the lowest volatility with near 0 returns
+Cluster 1 represents elevated volatility with the best returns
+Cluster 2 represents elevated volatility with the worst returns
+Script: visualization/july18_cluster_plots.py

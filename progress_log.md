@@ -37,3 +37,18 @@ Cluster 0 represents the lowest volatility with near 0 returns
 Cluster 1 represents elevated volatility with the best returns
 Cluster 2 represents elevated volatility with the worst returns
 Script: visualization/july18_cluster_plots.py
+
+## July 19 2026
+Plotted regime assignment over time, switched from cluster vs date scatter 
+to returns vs date scatter (colored by cluster) for better readability
+Confirmed average return/volatility per regime from July 11 groupby
+COVID (early to mid 2020) shows the most extreme swings in both directions, 
+largest single drop and largest single spike in the whole 2018 to 2023 range
+Cluster 0 (calm) forms a dense, near continuous band throughout, rarely 
+interrupted
+Clusters 1/2 (rally/crash) recur periodically across all years, not just 
+2020, with a secondary smaller spike of activity around 2022
+Regime behavior suggests that the most volatile period was mid 2020 during 
+COVID, with a secondary but smaller period of elevated volatility in 2022, 
+likely tied to energy price shocks and rate hikes
+Script: visualization/july19_regime_timeline.py

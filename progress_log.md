@@ -52,3 +52,20 @@ Regime behavior suggests that the most volatile period was mid 2020 during
 COVID, with a secondary but smaller period of elevated volatility in 2022, 
 likely tied to energy price shocks and rate hikes
 Script: visualization/july19_regime_timeline.py
+
+## July 25 2026
+Built rule based regime classification using vol_20 percentiles (bottom 30 
+percent low, middle 40 percent medium, top 30 percent high)
+Compared against K means cluster assignments using pd.crosstab
+Crosstab results:
+cluster 0: low 424, medium 413, high 168
+cluster 1: low 13, medium 123, high 170
+cluster 2: low 10, medium 59, high 109
+Best one to one matching: cluster 0 to low, cluster 1 to medium, cluster 2 
+to high, giving 656 out of 1489 days agreeing, 44.1 percent overlap
+Methods disagree because the quantile method only uses volatility to 
+classify regimes, while K means uses both returns and volatility together, 
+so a day with medium volatility but a strongly negative return gets pulled 
+into K means high/crash cluster even though quantile method would call it 
+medium based on volatility alone
+Script: method_comparison/july25_kmeans_vs_rulebased.py

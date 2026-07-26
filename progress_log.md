@@ -69,3 +69,21 @@ so a day with medium volatility but a strongly negative return gets pulled
 into K means high/crash cluster even though quantile method would call it 
 medium based on volatility alone
 Script: method_comparison/july25_kmeans_vs_rulebased.py
+
+## July 26 2026
+Mapped K means cluster numbers to rule based label names (0 to low, 1 to 
+medium, 2 to high) so both methods could be compared directly
+Flagged all rows where the two methods disagreed
+Pulled the 10 dates with the most extreme disagreement (rule based says 
+low, K means says high)
+All 10 dates showed a sharp single day negative return (roughly -1.3 
+percent to -2.3 percent) paired with genuinely low 20 day rolling 
+volatility
+Most extreme case: Nov 26 2021, return of -2.26 percent, tied to the 
+Omicron variant news shock, not the COVID crash itself (which was March 
+2020)
+K means is better than rule based because it factors in actual daily 
+returns, not just a smoothed 20 day volatility window, so it catches sharp 
+single day shocks that rule based misses when the surrounding month was 
+otherwise calm
+Script: method_comparison/july26_disagreement_analysis.py

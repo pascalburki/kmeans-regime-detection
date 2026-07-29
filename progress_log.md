@@ -93,6 +93,16 @@ Added a third feature, 20-day rolling correlation between SPY and QQQ returns, t
 Re-ran K-means (K=3) on SPY 2018-2023 with the new 3-feature input
 Cluster sizes: 0 = 461 days, 1 = 940 days, 2 = 88 days
 Cluster averages: cluster 0 (return 0.000964, vol 0.007660), cluster 1 (return 0.000070, vol 0.012802), cluster 2 (return 0.001294, vol 0.006506)
-Compared against the same rule based volatility only classification, 65 days where rule based says low and cluster says high
-Key finding: hypothesized disagreement days would show elevated correlation (tying to the Regime Instability project's stress finding), checked directly instead of assuming it. Mean correlation for disagreements was 0.7073 vs 0.9125 overall, mean vol for disagreements was 0.0057 vs 0.0108 overall, both lower than average, the opposite of the hypothesis. Correlation adds a genuinely separate axis of information beyond volatility, not just a confirmation of it
+Compared against the rule based volatility only classification, 65 days where rule based says low and cluster says high
+Key finding: hypothesized disagreement days would show elevated correlation, tying to the Regime Instability project's stress finding, checked directly instead of assuming it. Mean correlation for disagreements was 0.7073 vs 0.9125 overall, mean vol was 0.0057 vs 0.0108 overall, both lower than average, the opposite of the hypothesis
+Correlation adds a genuinely separate axis of information beyond volatility, not just a confirmation of it
 Script: method_comparison/july29_add_correlation_feature.py
+
+## July 30 2026
+Tested rolling window size (10, 20, 60 days) on SPY/QQQ clustering
+Cluster sizes shifted meaningfully by window: 10-day (417/120/962), 20-day (461/940/88), 60-day (196/708/545)
+Key finding: shorter windows are noisier, fewer days averaged means a short volatile stretch dominates the whole window instead of being diluted by calm days around it
+Tested a different asset pair, SPY/GLD instead of SPY/QQQ, same 20-day window
+SPY/QQQ produced one small, sharply distinct high-vol cluster (88 days), SPY/GLD produced three evenly sized clusters (447/637/405) with no outlier group
+Key finding: model loses sharp regime separation when the second asset isn't strongly correlated with the first during stress, GLD moves independently of SPY regardless of regime, so correlation stays flat and K-means relies mostly on returns and volatility alone
+Script: method_comparison/july30_rolling_window_test.py, method_comparison/july30_different_asset_test.py

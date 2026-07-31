@@ -94,7 +94,8 @@ Re-ran K-means (K=3) on SPY 2018-2023 with the new 3-feature input
 Cluster sizes: 0 = 461 days, 1 = 940 days, 2 = 88 days
 Cluster averages: cluster 0 (return 0.000964, vol 0.007660), cluster 1 (return 0.000070, vol 0.012802), cluster 2 (return 0.001294, vol 0.006506)
 Compared against the rule based volatility only classification, 65 days where rule based says low and cluster says high
-Key finding: hypothesized disagreement days would show elevated correlation, tying to the Regime Instability project's stress finding, checked directly instead of assuming it. Mean correlation for disagreements was 0.7073 vs 0.9125 overall, mean vol was 0.0057 vs 0.0108 overall, both lower than average, the opposite of the hypothesis
+Key finding: hypothesized disagreement days would show elevated correlation, tying to the Regime Instability project's stress finding.
+Mean correlation for disagreements was 0.7073 vs 0.9125 overall, mean vol was 0.0057 vs 0.0108 overall, both lower than average, the opposite of the hypothesis
 Correlation adds a genuinely separate axis of information beyond volatility, not just a confirmation of it
 Script: method_comparison/july29_add_correlation_feature.py
 

@@ -107,3 +107,22 @@ Tested a different asset pair, SPY/GLD instead of SPY/QQQ, same 20-day window
 SPY/QQQ produced one small, sharply distinct high-vol cluster (88 days), SPY/GLD produced three evenly sized clusters (447/637/405) with no outlier group
 Key finding: model loses sharp regime separation when the second asset isn't strongly correlated with the first during stress, GLD moves independently of SPY regardless of regime, so correlation stays flat and K-means relies mostly on returns and volatility alone
 Script: method_comparison/july30_rolling_window_test.py, method_comparison/july30_different_asset_test.py
+
+## July 31 2026
+Pivoted to real energy data: Natural Gas Futures (NG=F), 2018-2023, same K-means approach
+Cluster sizes: 0 = 932 (calm), 1 = 293 (extreme positive), 2 = 265 (stress)
+Cluster averages: cluster 0 (return -0.0007, vol 0.0295), cluster 1 (return +0.0549, vol 0.0492), cluster 2 (return -0.0592, vol 0.0525)
+Natural gas volatility is roughly 3-5x higher than SPY's on average, confirming energy commodities are meaningfully more volatile than broad equities
+Hypothesized cluster 1 ties to the 2022 Ukraine war energy crisis. Month distribution seemed to contradict this (fairly even across all months), but a year-based check told a different story: 2022 had 91 days vs. 14-66 in other years, clearly elevated. 2020 was also elevated (58), likely COVID-related
+Key finding: cluster 1 is a genuinely recurring pattern present throughout the whole period, not a single isolated event, but real crises (2022 war, 2020 COVID) clearly amplify its frequency well above baseline
+Added an SPY vs. NG volatility comparison and a price-by-cluster overlay chart to check visually whether energy stress lines up with equity stress or moves independently
+Script: method_comparison/july31_energy_pivot_setup.py
+
+## August 1 2026
+Built a rule-based regime classification for natural gas (volatility percentiles), compared against K-means clusters
+Crosstab shows cluster 0 aligns clearly with "low" (433/932 days). Both cluster 1 and cluster 2 align most with "high," since the rule-based method can't distinguish return direction, only volatility size
+Grouped cluster 1's 127 "medium" disagreement days and 156 "high" agreement days into distinct time periods, rather than treating each day in isolation
+The "medium" disagreement periods (26 total) are shorter and more numerous, several aligning with known events: COVID crash (Feb-Apr 2020), post-invasion energy shock (Mar-May 2022), and the run-up to Winter Storm Uri (late Jan-Feb 2021). One long, unexplained stretch (May-Oct 2023) still needs investigating
+The "high" agreement periods (11 total) are fewer but much longer, including a 208-day stretch (Oct 2022-May 2023) and a 149-day stretch (Oct 2021-Mar 2022) spanning the invasion itself. This suggests sustained crisis periods show up as prolonged "high" agreement, while sharper, shorter shocks are what create disagreement with the rule-based method
+Next: repeat this same period-grouping analysis for cluster 2 (stress/negative regime)
+Script: method_comparison/august1_energy_vs_rulebased.py

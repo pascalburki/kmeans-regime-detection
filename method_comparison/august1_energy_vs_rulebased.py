@@ -25,7 +25,7 @@ bottom_30 = df_clean['vol'].quantile(0.30)
 df_clean['rule_regime'] = pd.cut(df_clean['vol'], bins=[-float('inf'), bottom_30, top_30, float('inf')], labels=['low', 'medium', 'high'])
 disagreement_medium = df_clean[(df_clean['cluster'] == 1) & (df_clean['rule_regime'] == 'medium')]
 disagreement_dates_medium = disagreement_medium.index.sort_values()
-disagreement_high = df_clean[(df_clean['cluster'] == 1) & (df_clean['rule_regime'] == 'high')]
+disagreement_high = df_clean[(df_clean['cluster'] == 2) & (df_clean['rule_regime'] == 'high')]
 disagreement_dates_high = disagreement_high.index.sort_values()
 
 periods_medium = []

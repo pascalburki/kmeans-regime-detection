@@ -119,10 +119,9 @@ Added an SPY vs. NG volatility comparison and a price-by-cluster overlay chart t
 Script: method_comparison/july31_energy_pivot_setup.py
 
 ## August 1 2026
-Built a rule-based regime classification for natural gas (volatility percentiles), compared against K-means clusters
-Crosstab shows cluster 0 aligns clearly with "low" (433/932 days). Both cluster 1 and cluster 2 align most with "high," since the rule-based method can't distinguish return direction, only volatility size
-Grouped cluster 1's 127 "medium" disagreement days and 156 "high" agreement days into distinct time periods, rather than treating each day in isolation
-The "medium" disagreement periods (26 total) are shorter and more numerous, several aligning with known events: COVID crash (Feb-Apr 2020), post-invasion energy shock (Mar-May 2022), and the run-up to Winter Storm Uri (late Jan-Feb 2021). One long, unexplained stretch (May-Oct 2023) still needs investigating
-The "high" agreement periods (11 total) are fewer but much longer, including a 208-day stretch (Oct 2022-May 2023) and a 149-day stretch (Oct 2021-Mar 2022) spanning the invasion itself. This suggests sustained crisis periods show up as prolonged "high" agreement, while sharper, shorter shocks are what create disagreement with the rule-based method
-Next: repeat this same period-grouping analysis for cluster 2 (stress/negative regime)
+Compared K-means clusters against a rule-based volatility classification for natural gas
+Cluster 0 aligns clearly with "low" (433/932 days). Clusters 1 and 2 both align most with "high," since the rule-based method can't distinguish return direction, only volatility magnitude
+Grouped cluster 1's disagreement/agreement days into distinct time periods: 26 periods vs. "medium" (127 days), 8 periods vs. "high" (156 days), several matching known events (COVID crash, 2022 invasion shock, run-up to Winter Storm Uri). One long stretch (May-Oct 2023) still unexplained
+Repeated the same for cluster 2 against "high": 8 periods, 155 days, with genuinely negative returns (down to -2.7%), confirming cluster 2 captures sustained negative pressure during the same real crises, distinct from cluster 1's positive spikes
+Key finding: both extreme clusters show similar period lengths and timing, suggesting real crises produce both sharp upward spikes and sustained downward pressure within the same event, which K-means separates but the rule-based method cannot
 Script: method_comparison/august1_energy_vs_rulebased.py

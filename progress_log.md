@@ -125,3 +125,7 @@ Grouped cluster 1's disagreement/agreement days into distinct time periods: 26 p
 Repeated the same for cluster 2 against "high": 8 periods, 155 days, with genuinely negative returns (down to -2.7%), confirming cluster 2 captures sustained negative pressure during the same real crises, distinct from cluster 1's positive spikes
 Key finding: both extreme clusters show similar period lengths and timing, suggesting real crises produce both sharp upward spikes and sustained downward pressure within the same event, which K-means separates but the rule-based method cannot
 Script: method_comparison/august1_energy_vs_rulebased.py
+
+## August 2 2026
+Dedicated teaching session on Hidden Markov Models: hidden states, transition probabilities, and how HMM differs from K-means by modeling sequence and persistence rather than treating each day independently
+No code written today, per thec plan. Implementation begins next session

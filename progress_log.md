@@ -129,3 +129,10 @@ Script: method_comparison/august1_energy_vs_rulebased.py
 ## August 2 2026
 Dedicated teaching session on Hidden Markov Models: hidden states, transition probabilities, and how HMM differs from K-means by modeling sequence and persistence rather than treating each day independently
 No code written today, per thec plan. Implementation begins next session
+
+## August 2 2026
+Implemented HMM (Hidden Markov Model) on natural gas data, compared directly against K-means in the same script
+HMM state sizes: 604/506/380, with distinct calm/moderate/negative-stress means, similar in spirit to K-means's regimes but with different boundaries
+Key finding: HMM switches states only 25 times across the full 2018-2023 period, compared to K-means's 656 switches, confirming HMM's persistence modeling produces far smoother, more realistic regime assignments than K-means's day-by-day approach
+Tested the previously unexplained May-Oct 2023 period (91 trading days) directly: HMM classified all 91 days as a single hidden state, agreeing with K-means's original finding that this was one continuous, persistent regime. Since HMM explicitly penalizes frequent switching, this cross-method agreement is real evidence the 2023 period was a genuine sustained event, not a coincidence
+Script: method_comparison/august2_hmm_implementation.py

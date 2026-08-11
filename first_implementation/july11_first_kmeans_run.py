@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans 
+from sklearn.preprocessing import StandardScaler
 import yfinance as yf
 
 df_SPY = yf.download('SPY', '2018-01-01', '2023-12-31')
@@ -15,8 +16,10 @@ df_SPY['vol_20']=vol_20
 
 df_clean = df_SPY.dropna().copy()
 x = df_clean[['returns', 'vol_20']]
+scaler = StandardScaler()
+x_scaled = scaler.fit_transform(x)
 model = KMeans(n_clusters=3, random_state=3)
-labels = model.fit_predict(x)
+labels = model.fit_predict(x_scaled)
 df_clean['cluster'] = labels
 
 print(labels)

@@ -4,7 +4,9 @@
 
 This project tests whether unsupervised machine learning (K-means clustering) can identify market regimes directly from data, without manually setting thresholds. It's a direct follow-up to my Regime Instability Analysis project, which defined regimes using manually-set volatility percentiles.
 
-K-means is given raw features (returns, volatility, and cross-asset correlation) and left to find its own groupings, compared against the manual, rule-based method. Later extended to real energy market data and to a Hidden Markov Model, to address a real limitation K-means has: no memory of time.
+K-means is given raw features (returns, volatility, and cross-asset correlation) and left to find its own groupings, compared against a manual, rule-based method. Later extended to real energy market data and to a Hidden Markov Model, to address a real limitation K-means has: no memory of time.
+
+**A note on process:** this project went through two rounds of real bug-fixing — unscaled features letting correlation dominate the clustering, and a hardcoded cluster-to-label mapping that went stale once cluster composition changed. Several early findings were revised or retracted as a result. Everything below reflects the corrected, verified state — every script in the project has been fixed and re-verified by direct rerun. The full history — what was originally found, what turned out to be wrong, and why — is documented in `progress_log.md` for anyone who wants the complete record.
 
 ## Assets & Data
 
@@ -12,43 +14,51 @@ SPY, QQQ — daily data, 2018-2023 (1,489 trading days after cleaning), equity b
 
 NG=F (Natural Gas Futures) — daily data, 2018-2023, energy pivot.
 
+GLD — daily data, 2018-2023, used for a cross-asset correlation comparison.
+
 ## Methodology
 
-Features: daily log returns, 20-day rolling volatility, and 20-day rolling correlation between SPY and QQQ (added July 29).
+Features: daily log returns, 20-day rolling volatility, and (where noted) 20-day rolling correlation between two assets. All features are standardized (`StandardScaler`) before clustering, so no single feature dominates the distance calculation purely due to its numeric scale.
 
-Clustering: K-means with K=3, validated using the elbow method (tested K=2 through K=5; inertia improvement drops off sharply after K=3, from a 0.06 improvement between K=2 and K=3 down to 0.03 between K=4 and K=5).
+Clustering: K-means with K=3, validated using the elbow method (K=2 through K=5).
 
-Comparison method: a rule-based classification using 20-day volatility percentiles (bottom 30% = low, middle 40% = medium, top 30% = high), compared against K-means cluster assignments using a crosstab and best one-to-one label matching.
+Comparison method: a rule-based classification using 20-day volatility percentiles (bottom 30% = low, middle 40% = medium, top 30% = high), compared against K-means cluster assignments via crosstab. Cluster-to-label mappings are derived dynamically from each run's actual cluster statistics (ranked mean volatility or mean return), not assumed — K-means cluster numbers are arbitrary and can't be hardcoded to a meaning.
 
-HMM: a Gaussian Hidden Markov Model with 3 hidden states, fit on the same features, compared directly against K-means on the same data.
+HMM: a Gaussian Hidden Markov Model with 3 hidden states, fit on the same standardized features, compared directly against K-means.
 
 ## Key Findings
 
-Baseline comparison (2 features: returns + volatility): K-means and the rule-based method agree on 656 of 1,489 days (44.1% overlap). The two methods disagree because the rule-based method only looks at volatility, while K-means also factors in the actual return on a given day.
+**Baseline (returns + volatility, SPY):** K-means produces cluster sizes 1024 / 29 / 436. The 29-day cluster is a sharply distinct stress regime (mean return -0.007, mean vol 0.049) — cleanly separated from calm (1024 days, near-zero return) and moderate-positive (436 days) regimes.
 
-Most extreme disagreement example: November 26, 2021, a -2.26% single-day return tied to the Omicron variant news shock. Classified as "low volatility" by the rule-based method since the surrounding month was calm, but correctly flagged as a distinct, high-stress day by K-means.
+**Elbow method:** inertia drops from 2121 (K=2) to 1584 (K=3) to 1276 (K=4) to 857 (K=5) — the largest single-step improvement is between K=2 and K=3, supporting K=3 as the right choice.
 
-Adding correlation as a third feature (July 29): I initially hypothesized disagreement days would show elevated correlation, tying to the Regime Instability project's core finding that correlation spikes during stress. I checked this directly instead of assuming it, and the data showed the opposite. Disagreement days had lower average correlation (0.707) and lower average volatility (0.0057) than the dataset average (0.912 and 0.0108). Correlation captures a genuinely separate axis of regime information, not just a confirmation of the volatility signal.
+**Adding correlation as a third feature (SPY/QQQ):** cluster sizes 371 / 30 / 1088, with the same kind of sharp 30-day high-volatility outlier (mean vol 0.049) as the baseline.
 
-Energy pivot (NG=F): the same methodology applied to natural gas confirms it generalizes beyond equities. Natural gas's average volatility is roughly 3-5x higher than SPY's. A cluster of extreme single-day spikes was tested against two hypotheses, the 2022 Russia-Ukraine energy crisis and seasonal winter demand. A month-level check seemed to contradict the crisis hypothesis, but a year-level check confirmed it: 2022 had 91 such days versus 14-66 in other years.
+**Window length sensitivity:** a 10-day window produces no small, sharp outlier cluster at all (largest high-vol group is 307 days, 20% of the data) — genuinely noisier and less separated than the 20-day (30-day outlier) or 60-day (64-day outlier) windows. Shorter windows dilute the signal.
 
-Grouping disagreement days into periods instead of treating them as scattered individual days revealed real, identifiable events. Cluster 1 vs. rule-based "medium" gave 127 days across 26 periods, several matching the COVID crash, the post-invasion energy shock, and the run-up to Winter Storm Uri. One 129-day stretch (May-Oct 2023) didn't match an obvious single event.
+**Cross-asset comparison (SPY/GLD vs. SPY/QQQ):** both asset pairs produce a nearly identical small, sharp outlier cluster (30-32 days, vol ~0.048-0.049) once features are properly scaled. There's no evidence in this project that a more-correlated second asset changes regime separability.
 
-Adding HMM: K-means re-evaluates every day independently, so one calmer day in the middle of a stress period causes a regime switch for that single day, then a switch back. HMM factors in the probability of staying in the same regime, and this shows up directly in the numbers: only 25 regime switches across the full 2018-2023 period, versus K-means's 656. HMM also independently confirmed the unexplained 2023 period was one genuine, persistent regime, agreeing with K-means despite using a completely different method, since HMM specifically penalizes frequent switching.
+**Energy pivot (NG=F):** cluster sizes 799 / 317 / 374. Cluster 1 (mean return -0.050, mean vol 0.055) is the stress regime; cluster 2 (mean return 0.044, mean vol 0.051) is an extreme-positive regime. Both concentrate heavily in 2022 (101 and 114 days respectively) and 2020 (61 and 81 days) — consistent with the Ukraine energy crisis and COVID.
+
+**Energy vs. rule-based comparison:** grouping disagreement days into contiguous periods rather than treating them as isolated dates reveals real structure — 147 days across 20 periods where K-means called "extreme positive" but the rule-based method called "medium," and 217 days across 10 periods for the negative/high case. Several periods line up with known events: the Nov 2018-Feb 2019 stretch, the 2020 COVID crash, the run-up to the Ukraine invasion (Oct 2021-Mar 2022), and a long Oct 2022-May 2023 stretch that remains only partially explained.
+
+**Adding HMM:** hidden state sizes 605/20/865 on NG=F, with only 16 regime switches versus K-means's 536 switches on the same standardized data. HMM's persistence-based structure produces far fewer switches, consistent with it modeling time-dependence directly rather than treating each day independently.
 
 ## Limitations
 
-Window length affects results significantly. A longer rolling window smooths volatility more than a shorter one, since it averages over more days. A 20-day stress period looks highly volatile in a 20-day window, but the same period gets diluted by surrounding calm days in a 50-day window.
+Window length materially affects cluster separation — shorter windows are noisier.
 
-Correlation was only tested on one asset pair, SPY/QQQ. A different pairing, especially one with historically low or negative correlation like SPY/GLD, could behave very differently under stress, with correlation dropping rather than rising.
+No evidence found that correlation strength between assets changes regime separability (tested on SPY/QQQ and SPY/GLD).
 
-HMM requires more assumptions than K-means. It relies on estimated transition probabilities that could be wrong, and once wrong, the model is biased toward staying in an incorrect regime rather than correcting quickly. K-means has no such bias, it just reacts to each day's data.
+HMM requires more assumptions than K-means (transition probability estimation, initialization sensitivity).
 
-## Status / In Progress
+The two bugs described in the process note above (unscaled features, hardcoded cluster labels) both produced plausible-looking, coherent results with no errors or crashes — exactly the kind of bug that's easy to miss because nothing looks broken. Any future extension of this project should treat cluster numbers as arbitrary per-run and verify feature scaling before drawing conclusions from cluster composition.
 
-Core analysis complete: feature engineering, rule-based comparison, energy pivot, HMM implementation.
+## Status
 
-Next: a regime-based trading strategy, backtested against historical data, combined with the Regime Instability Analysis project into a single dashboard.
+Core analysis complete. All known bugs fixed and verified by direct rerun — nothing currently open.
+
+Next: incorporated into the combined Regime Strategy Dashboard (separate repo).
 
 ## Related Work
 

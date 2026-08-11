@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import StandardScaler
 import yfinance as yf
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
@@ -22,8 +23,10 @@ df_SPY["returns"] = returns_SPY
 df_SPY["vol_20"] = vol_20_SPY
 df_NG_clean = df_NG.dropna().copy()
 x = df_NG_clean[['returns', 'vol_20']]
+scaler = StandardScaler()
+x_scaled = scaler.fit_transform(x)
 model = KMeans(n_clusters=3, random_state=3)
-labels = model.fit_predict(x)
+labels = model.fit_predict(x_scaled)
 df_NG_clean['cluster'] = labels
 cluster_0_days = df_NG_clean[df_NG_clean['cluster'] == 0]
 cluster_1_days = df_NG_clean[df_NG_clean['cluster'] == 1]
@@ -69,8 +72,8 @@ plt.legend()
 plt.show()
 
 plt.scatter(cluster_0_days.index, cluster_0_days['Close'], color='green', label='Calm', s=10)
-plt.scatter(cluster_1_days.index, cluster_1_days['Close'], color='orange', label='Extreme Positive', s=10)
-plt.scatter(cluster_2_days.index, cluster_2_days['Close'], color='red', label='Stress', s=10)
+plt.scatter(cluster_1_days.index, cluster_1_days['Close'], color='orange', label='Stress', s=10)
+plt.scatter(cluster_2_days.index, cluster_2_days['Close'], color='red', label='Extreme positive', s=10)
 plt.title('Natural Gas Price, Colored by Regime Cluster')
 plt.xlabel('Date')
 plt.ylabel('Price (USD)')

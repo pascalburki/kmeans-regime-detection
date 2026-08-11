@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
 import yfinance as yf
 
 df_SPY = yf.download('SPY', '2018-01-01', '2023-12-31')
@@ -16,8 +17,10 @@ df_SPY['vol_20']=vol_20
 
 df_clean = df_SPY.dropna().copy()
 x = df_clean[['returns', 'vol_20']]
+scaler = StandardScaler()
+x_scaled = scaler.fit_transform(x)
 model = KMeans(n_clusters=3, random_state=3)
-labels = model.fit_predict(x)
+labels = model.fit_predict(x_scaled)
 df_clean['cluster'] = labels
 
 print("labels; ", labels)
@@ -31,7 +34,7 @@ inertia = []
 
 for k in k_values:
   KM = KMeans(n_clusters=k, random_state=3)
-  KM = KM.fit(x)
+  KM = KM.fit(x_scaled)
   i = KM.inertia_
   inertia.append(i)
 
@@ -44,7 +47,13 @@ df_clean['rule_regime'] = pd.cut(df_clean['vol_20'], bins=[-float('inf'), low_cu
 
 print("Crosstab (cluster vs rule-based regime):", pd.crosstab(df_clean['cluster'], df_clean['rule_regime']))
 
-cluster_to_label = {0: 'low', 1: 'medium', 2: 'high'}
+# --- NEW: derive cluster meaning from actual data instead of assuming {0:'low',1:'medium',2:'high'} ---
+vol_ranking = df_clean.groupby('cluster')['vol_20'].mean().sort_values()
+print("\nCluster volatility ranking (lowest to highest):")
+print(vol_ranking)
+cluster_to_label = {cluster: label for cluster, label in zip(vol_ranking.index, ['low', 'medium', 'high'])}
+print(f"Derived cluster_to_label mapping: {cluster_to_label}")
+
 df_clean['cluster_label'] = df_clean['cluster'].map(cluster_to_label)
 
 df_clean['disagree'] = df_clean['cluster_label'] != df_clean['rule_regime']

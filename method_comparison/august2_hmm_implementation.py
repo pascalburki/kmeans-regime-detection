@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
 import yfinance as yf
 import matplotlib.pyplot as plt
 from hmmlearn.hmm import GaussianHMM
@@ -15,14 +16,16 @@ df["returns"] = returns
 df["vol"] = vol
 df_clean = df.dropna().copy()
 x = df_clean[["returns", "vol"]]
+scaler = StandardScaler()
+x_scaled = scaler.fit_transform(x)
 
 model_KMeans = KMeans(n_clusters=3, random_state=3)
-model_KMeans.fit(x)
-kmeans_labels = model_KMeans.predict(x)
+model_KMeans.fit(x_scaled)
+kmeans_labels = model_KMeans.predict(x_scaled)
 df_clean["kmeans_labels"] = kmeans_labels
 model_HMM = GaussianHMM(n_components=3, covariance_type="full", random_state=3)
-model_HMM.fit(x)
-hidden_states = model_HMM.predict(x)
+model_HMM.fit(x_scaled)
+hidden_states = model_HMM.predict(x_scaled)
 df_clean["hidden_states"] = hidden_states
 hmm_switches = (df_clean['hidden_states'] != df_clean['hidden_states'].shift(1)).sum()
 KMeans_switches = (df_clean['kmeans_labels'] != df_clean['kmeans_labels'].shift(1)).sum()

@@ -6,7 +6,7 @@ This project tests whether unsupervised machine learning (K-means clustering) ca
 
 K-means is given raw features (returns, volatility, and cross-asset correlation) and left to find its own groupings, compared against a manual, rule-based method. Later extended to real energy market data and to a Hidden Markov Model, to address a real limitation K-means has: no memory of time.
 
-**A note on process:** this project went through two rounds of real bug-fixing — unscaled features letting correlation dominate the clustering, and a hardcoded cluster-to-label mapping that went stale once cluster composition changed. Several early findings were revised or retracted as a result. Everything below reflects the corrected, verified state — every script in the project has been fixed and re-verified by direct rerun. The full history — what was originally found, what turned out to be wrong, and why — is documented in `progress_log.md` for anyone who wants the complete record.
+**A note on process:** this project went through two rounds of real bug-fixing — unscaled features letting correlation dominate the clustering, and a hardcoded cluster-to-label mapping that went stale once cluster composition changed. Several early findings were revised or retracted as a result. Everything below reflects the corrected, verified state. Every script in the project has been fixed and re-verified by direct rerun. The full history, what was originally found, what turned out to be wrong, and why, is documented in `progress_log.md` for anyone who wants the complete record.
 
 ## Assets & Data
 

@@ -10,21 +10,19 @@ K-means is given raw features (returns, volatility, and cross-asset correlation)
 
 ## Assets & Data
 
-SPY, QQQ — daily data, 2018-2023 (1,489 trading days after cleaning), equity baseline.
-
-NG=F (Natural Gas Futures) — daily data, 2018-2023, energy pivot.
-
-GLD — daily data, 2018-2023, used for a cross-asset correlation comparison.
+- **SPY, QQQ** — daily data, 2018-2023 (1,489 trading days after cleaning), equity baseline.
+- **NG=F (Natural Gas Futures)** — daily data, 2018-2023, energy pivot.
+- **GLD** — daily data, 2018-2023, used for a cross-asset correlation comparison.
 
 ## Methodology
 
-Features: daily log returns, 20-day rolling volatility, and (where noted) 20-day rolling correlation between two assets. All features are standardized (`StandardScaler`) before clustering, so no single feature dominates the distance calculation purely due to its numeric scale.
+**Features:** daily log returns, 20-day rolling volatility, and (where noted) 20-day rolling correlation between two assets. All features are standardized (StandardScaler) before clustering, so no single feature dominates the distance calculation purely due to its numeric scale.
 
-Clustering: K-means with K=3, validated using the elbow method (K=2 through K=5).
+**Clustering:** K-means with K=3, validated using the elbow method (K=2 through K=5).
 
-Comparison method: a rule-based classification using 20-day volatility percentiles (bottom 30% = low, middle 40% = medium, top 30% = high), compared against K-means cluster assignments via crosstab. Cluster-to-label mappings are derived dynamically from each run's actual cluster statistics (ranked mean volatility or mean return), not assumed — K-means cluster numbers are arbitrary and can't be hardcoded to a meaning.
+**Comparison method:** a rule-based classification using 20-day volatility percentiles (bottom 30% = low, middle 40% = medium, top 30% = high), compared against K-means cluster assignments via crosstab. Cluster-to-label mappings are derived dynamically from each run's actual cluster statistics (ranked mean volatility or mean return), not assumed — K-means cluster numbers are arbitrary and can't be hardcoded to a meaning.
 
-HMM: a Gaussian Hidden Markov Model with 3 hidden states, fit on the same standardized features, compared directly against K-means.
+**HMM:** a Gaussian Hidden Markov Model with 3 hidden states, fit on the same standardized features, compared directly against K-means.
 
 ## Key Findings
 
@@ -46,13 +44,10 @@ HMM: a Gaussian Hidden Markov Model with 3 hidden states, fit on the same standa
 
 ## Limitations
 
-Window length materially affects cluster separation — shorter windows are noisier.
-
-No evidence found that correlation strength between assets changes regime separability (tested on SPY/QQQ and SPY/GLD).
-
-HMM requires more assumptions than K-means (transition probability estimation, initialization sensitivity).
-
-The two bugs described in the process note above (unscaled features, hardcoded cluster labels) both produced plausible-looking, coherent results with no errors or crashes — exactly the kind of bug that's easy to miss because nothing looks broken. Any future extension of this project should treat cluster numbers as arbitrary per-run and verify feature scaling before drawing conclusions from cluster composition.
+- Window length materially affects cluster separation — shorter windows are noisier.
+- No evidence found that correlation strength between assets changes regime separability (tested on SPY/QQQ and SPY/GLD).
+- HMM requires more assumptions than K-means (transition probability estimation, initialization sensitivity).
+- The two bugs described in the process note above (unscaled features, hardcoded cluster labels) both produced plausible-looking, coherent results with no errors or crashes — exactly the kind of bug that's easy to miss because nothing looks broken. Any future extension of this project should treat cluster numbers as arbitrary per-run and verify feature scaling before drawing conclusions from cluster composition.
 
 ## Status
 
@@ -62,4 +57,8 @@ Next: incorporated into the combined Regime Strategy Dashboard (separate repo).
 
 ## Related Work
 
-This project builds directly on [Regime-Based Risk Instability in Financial Markets](https://github.com/pascalburki/regime-risk-instability), which defines regimes using manually-set volatility thresholds and identifies correlation, not volatility alone, as the primary driver of diversification failure under stress.
+This project builds directly on Regime-Based Risk Instability in Financial Markets, which defines regimes using manually-set volatility thresholds and identifies correlation, not volatility alone, as the primary driver of diversification failure under stress.
+
+## How I worked
+
+I chose the project, the questions and what to test, ran the code and checked the results. I used an AI tutor (Claude) to help me learn the methods and to debug the code.
